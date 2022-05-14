@@ -10,10 +10,10 @@ detection_scores = []
 
 # Construct API parameters and URL. The API endpoint URL is https://object- detection6.p.rapidapi.com/objectdetect
 # Replace SIGN-UP-FOR-KEY below with your RapidAPI API-key which is obtained after subscription  
-url = "https://object-detection6.p.rapidapi.com/objectdetect"
+url = "https://image-analyser1.p.rapidapi.com/objectdetect"
 headers = {
         "content-type": "application/json",
-        "X-RapidAPI-Host": "object-detection6.p.rapidapi.com", 
+        "X-RapidAPI-Host": "image-analyser1.p.rapidapi.com", 
         "X-RapidAPI-Key": "SIGN-UP-FOR-KEY"
 }
 
