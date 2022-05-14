@@ -4,6 +4,7 @@ import json
 import base64
 import requests
 
+
 detection_boxes = []
 detection_scores = []
 
@@ -13,8 +14,10 @@ url = "https://object-detection6.p.rapidapi.com/objectdetect"
 headers = {
         "content-type": "application/json",
         "X-RapidAPI-Host": "object-detection6.p.rapidapi.com", 
-        "X-RapidAPI-Key": "SIGN-UP-FOR-KEY"
+        "X-RapidAPI-Key": "19dccc0843msh4aba83c8dfc3f85p1f44c6jsne838c3a14cc6"
 }
+
+
 # Start webcam to record video using OpenCV
 cap = cv2.VideoCapture(0)
 while(True):
@@ -29,16 +32,15 @@ while(True):
     height = frame.shape[0]
     width = frame.shape[1]
     
+    
+    # convert to jpeg and save in variable
+    image_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
 
-    file = 'live.png'
-    cv2.imwrite( file,frame)
-    with io.open("live.png", 'rb') as image_file:
-        content = image_file.read()
     
     # Encode an image file from the video into Base64 format
-    encoded_string = base64.b64encode(content).decode('utf-8')
+    encoded_string = base64.b64encode(image_bytes).decode('utf-8')
 
-    payload = { "b64image": encoded_string}
+    payload = {"b64image": encoded_string}
     
     # Upload image to TenaxisAI API endpoint for analysis
     http_response = requests.request("POST", url, json=payload, headers=headers)
@@ -55,23 +57,20 @@ while(True):
         vertices = Annotations[index]['vertices']
         
         # Starting coordinate
-        # represents the bottom left corner of rectangle
+        # represents the top left corner of rectangle
         xmin = int(float(vertices['xmin'])*width)
         ymin = int(float(vertices['ymin'])*height)        
         start_point = (xmin, ymin)
 
   
         # Ending coordinate
-        # represents the top right corner of rectangle
+        # represents the bottom right corner of rectangle
         xmax = int(float(vertices['xmax'])*width)
         ymax = int(float(vertices['ymax'])*height)    
         end_point = (xmax, ymax)
   
         # Blue color in BGR
-        blue = (255, 0, 0)
-
-        # Red color in BGR
-        red = (0, 0, 255)
+        color = (255, 0, 0)
   
         # Line thickness of 1 px
         thickness = 1
@@ -84,9 +83,8 @@ while(True):
 
         # Using cv2.rectangle() method
         # Draw a rectangle with blue line borders of thickness of 1 px
-        # Add text showing object name and probability
-        frame = cv2.rectangle(frame, start_point, end_point, red, thickness)
-        cv2.putText(frame, label+" "+rating, (xmin, ymin+20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, blue, 2)
+        frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+        cv2.putText(frame, label+" "+rating, (xmin, ymin+20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
         index = index + 1
 
     # Displaying the image 
